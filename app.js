@@ -26,7 +26,18 @@ app.use(rateLimitMiddleware);
 
 app.use(
     cors({
-        origin: env.frontendUrl
+        origin: env.frontendUrl,
+        methods: [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+            "PATCH"
+        ],
+        allowedHeaders: [
+            "Content-Type",
+            "Authorization"
+        ]
     })
 );
 
@@ -59,6 +70,12 @@ app.get("/", (req, res) => {
     });
 });
 
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        success: true,
+        status: "healthy"
+    })
+})
 app.use(notFoundMiddleware);
 
 app.use(errorMiddleware);
