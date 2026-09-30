@@ -27,6 +27,14 @@ jobs:
               run: npm ci
 
             - name: Run tests
+              env:
+                MONGO_URI: ${{ secrets.MONGO_URI }}
+                MONGO_TEST_URI: ${{ secrets.MONGO_TEST_URI }}
+                JWT_SECRET: ${{ secrets.JWT_SECRET }}
+                FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+                CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+                CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+                CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
               run: npm test
 
             - name: Set up Docker Buildx
