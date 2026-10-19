@@ -14,6 +14,7 @@ import bcrypt from "bcrypt";
 import app from "../app.js";
 import Product from "../models/Product.js";
 import User from "../models/User.js";
+import { connectRedis } from "../config/redis.js";
 
 
 describe("Product API", () => {
@@ -23,6 +24,10 @@ describe("Product API", () => {
     // --------------------------------
 
     beforeAll(async () => {
+
+        beforeAll(async () => {
+            await connectRedis();
+        })
 
         await mongoose.connect(
             process.env.MONGO_TEST_URI

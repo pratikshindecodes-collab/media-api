@@ -16,22 +16,27 @@ const authMiddleware = (req, res, next) => {
         }
 
         // Check Bearer format
-        if (!authHeader.startsWith("Bearer")) {
+        const [scheme, token, ...extra] = authHeader.split(" ");
+
+        if (
+            scheme !== "Bearer" ||
+            !token ||
+            extra.length > 0
+        ) {
             return res.status(401).json({
                 success: false,
                 message: "Invalid authorization format"
             });
         }
 
-        // Extract token
-        const token = 
-            authHeader.split(" ")[1];
-
         // Verify token
         const decoded = 
             jwt.verify(
                 token,
-                env.jwtSecret
+                env.jwtSecret,
+                {
+                    algorithms: ["HS256"]
+                }
             );
 
         // Attach user information

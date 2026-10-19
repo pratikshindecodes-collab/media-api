@@ -1,0 +1,27 @@
+import { Queue } from "bullmq";
+import env from "../../config/env.js";
+
+const notificationQueue = new Queue(
+    "notification-queue",
+    {
+        connection: {
+            url: env.redisUrl
+        },
+
+        defaultJobOptions: {
+            attempts: 3,
+
+            backoff: {
+                type: "exponential",
+                delay: 1000
+            },
+
+            removeOnComplete: 1000,
+
+            removeOnFail: 5000
+        }
+    }
+);
+
+export default notificationQueue;
+

@@ -10,7 +10,8 @@ export const findProducts = async ({
         .find(query)
         .sort(sortOption)
         .skip(skip)
-        .limit(limit);
+        .limit(limit)
+        .lean();
 };
 
 export const countProducts = async (query) => {

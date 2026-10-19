@@ -1,43 +1,77 @@
 const productValidation = (req, res, next) => {
+    const name =
+        typeof req.body.name === "string"
+            ? req.body.name.trim()
+            : "";
 
-    const { name, price } = req.body;
+    const price =
+        req.body.price !== undefined
+            ? Number(req.body.price)
+            : NaN;
 
     // Name validation
-    if (!name || name.trim() === "") {
+    if (!name) {
         return res.status(400).json({
             success: false,
             message: "Product name is required"
         });
     }
+    if (name.length < 2) {
+        return res.status(400).json({
+            success: false,
+            message: "Product name must be at least 2 characters"
+        });        
+    } 
+
+    if (name.length > 100) {
+        return res.status(400).json({
+            success: false,
+            message: "Product name must not exceed 100 characters"
+        });
+    }
 
     // Price validation
-    if (price === undefined || price === "") {
+    if (req.body.price === undefined) {
         return res.status(400).json({
             success: false,
             message: "Product price is required"
         });
-    }
+    } 
 
-    // Convert price to number
-    const numericPrice = Number(price);
-
-    if (Number.isNaN(numericPrice)) {
+    if (!Number.isFinite(price)) {
         return res.status(400).json({
             success: false,
             message: "Product price must be a number"
-        });
+        })
     }
 
-    // Positive price
-    if (numericPrice <= 0) {
+    if (price <= 0) {
         return res.status(400).json({
             success: false,
             message: "Product price must be greater than 0"
         });
     }
 
-    next();
-}
+    // Reject unexpected fields
+    const allowedFields = [
+        "name",
+        "price"
+    ];
 
+    for (const field of Object.keys(req.body)) {
+        if (!allowedFields.includes(field)) {
+            return res.status(400).json({
+                success: false,
+                message: "Unexpected field"
+            });
+        }
+    }
+
+    // Use sanitized values from this point onward
+    req.body.name = name;
+    req.body.price = price;
+
+    next();
+};
 
 export default productValidation;

@@ -6,7 +6,11 @@ dotenv.config();
 const requiredEnvVariables = [
     "MONGO_URI",
     "JWT_SECRET",
-    "FRONTEND_URL"
+    "FRONTEND_URL",
+    "CLOUDINARY_CLOUD_NAME",
+    "CLOUDINARY_API_KEY",
+    "CLOUDINARY_API_SECRET",
+    "REDIS_URL"
 ];
 
 for (const variable of requiredEnvVariables) {
@@ -32,8 +36,22 @@ const env = {
         process.env.NODE_ENV || "development",
 
     frontendUrl:
-        process.env.FRONTEND_URL
-};
+        process.env.FRONTEND_URL,
+
+    cloudinary: {
+        cloudName:
+            process.env.CLOUDINARY_CLOUD_NAME,
+
+        apiKey:
+            process.env.CLOUDINARY_API_KEY,
+        
+        apiSecret:
+            process.env.CLOUDINARY_API_SECRET
+    },
+
+    redisUrl:
+        process.env.REDIS_URL
+}; 
 
 export default env;
 

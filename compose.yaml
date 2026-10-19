@@ -1,0 +1,10 @@
+services:
+  api:
+    build: 
+      context: .
+    container_name: media-api-container
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - .env

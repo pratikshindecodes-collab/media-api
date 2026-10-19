@@ -4,16 +4,19 @@ import helmet from "helmet";
 import cors from "cors";
 
 import productRoutes from "./routes/productRoutes.js";
-import errorMiddleware from "./middleware/errorMiddleware.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import webhookRoutes from "./routes/webhookRoutes.js";
+import errorMiddleware from "./middleware/errorMiddleware.js";
 import rateLimitMiddleware from "./middleware/rateLimitMiddleware.js";
 import loggerMiddleware from "./middleware/loggerMiddleware.js";
 import notFoundMiddleware from "./middleware/notFoundMiddleware.js";
-
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
 
 
 const app = express();
+app.use("/webhooks", webhookRoutes);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -42,6 +45,9 @@ app.use(
 );
 
 app.use(loggerMiddleware);
+
+
+
 
 app.use(
     "/uploads",
@@ -76,6 +82,9 @@ app.get("/health", (req, res) => {
         status: "healthy"
     })
 })
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 app.use(notFoundMiddleware);
 
 app.use(errorMiddleware);
