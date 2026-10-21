@@ -2,6 +2,7 @@ import express from "express";
 import env from "./config/env.js"
 import helmet from "helmet";
 import cors from "cors";
+import mongoose from "mongoose";
 
 import productRoutes from "./routes/productRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -13,6 +14,7 @@ import loggerMiddleware from "./middleware/loggerMiddleware.js";
 import notFoundMiddleware from "./middleware/notFoundMiddleware.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.js";
+import redisClient from "./config/redis.js";
 
 
 const app = express();
@@ -80,8 +82,27 @@ app.get("/health", (req, res) => {
     res.status(200).json({
         success: true,
         status: "healthy"
-    })
-})
+    });
+});
+
+app.get("/health/ready", (req, res) => {
+    const mongoReady = 
+        mongoose.connection.readyState === 1;
+
+    const redisReady = 
+        redisClient.isReady;
+
+    const ready = mongoReady && redisReady;
+
+    res.status(ready ? 200 : 503).json({
+        success: ready,
+        status: ready ? "ready" : "not ready",
+        dependencies: {
+            mongodb: mongoReady ? "connected" : "unavailable",
+            redis: redisReady ? "connected" : "unavailable"
+        }
+    });
+});
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
