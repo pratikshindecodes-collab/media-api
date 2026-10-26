@@ -1,8 +1,11 @@
+
 import { Queue } from "bullmq";
 import env from "../../config/env.js";
 
 const webhookQueue = new Queue("webhook-queue", {
-    connnection: { url: env.redisUrl },
+    connection: {
+        url: env.redisUrl
+    },
     defaultJobOptions: {
         attempts: 3,
         backoff: {
